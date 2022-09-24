@@ -1,90 +1,112 @@
-const fs = require('fs').promises
-const path = require('path')
-const { randomUUID } = require('crypto')
+const { Contact } = require('../models')
 
-const contactsPath = path.join(__dirname, '../db/contacts.json')
-console.log('contacts.json', contactsPath)
+const getAllContacts = async () => { return await Contact.find({}) }
 
-const getAllContacts = async () => {
-  return JSON.parse(await fs.readFile(contactsPath, "utf-8"))
-}
-
-const writeContact = async (contact) => { await fs.writeFile(contactsPath, JSON.stringify(contact)) }
+const writeContact = async (contact) => { await Contact.create(contact) }
 
 const listContacts = async (req, res) => {
   try {
     const allContacts = await getAllContacts()
     if (allContacts.length !== 0) {
-      return res.status(200).json(allContacts);
+      return res.status(200).json(allContacts)
     }
     return null
   } catch (error) {
-    console.error('ERROR listContacts:', error.message);
+    console.error('ERROR listContacts:', error.message)
   }
 }
 
 const getContactById = async (req, res) => {
-  const allContacts = await getAllContacts()
-  const { id } = req.params;
-  const result = allContacts.find((contact) => contact.id === String(id));
-  if (!result) {
+  try {
+    const { id } = req.params
+    const contact = await Contact.findById(id) // findOne({_id;id})
+    return res.json(contact)
+  } catch (error) {
     return res
       .status(404)
-      .json({ message: `Contacts with id '${id}' not found` });
+      .json({ message: `Contact not found. Check you id` })
   }
-  res.json(result);
 }
 
 const removeContact = async (req, res) => {
   try {
     const allContacts = await getAllContacts()
-    const { id } = req.params;
-    const contact = allContacts.filter((contact) => contact.id !== String(id));
-    if (contact.length === allContacts.length) {
+    const { id } = req.params
+    const result = await Contact.findByIdAndRemove(id)
+    if (result.length === allContacts.length) {
       return res.status(404).json({ message: `contact ${id} not found` })
     }
-    await writeContact(contact);
-    res.status(200).json({ message: `contact ${id} deleted` });
+    res.status(200).json({ message: `contact ${id} deleted` })
   } catch (error) {
-    console.log('removeContact', error.message);
+    console.log('removeContact', error.message)
+    return res
+      .status(404)
+      .json({ message: `Contact not found. Check you id` })
   }
 }
 
 const addContact = async (req, res) => {
   try {
     const body = req.body
-    const allContacts = await getAllContacts()
-    const newContact = { id: randomUUID(), ...body }
-    allContacts.push(newContact)
-    await writeContact(allContacts)
-    res.status(201).json(allContacts)
+    await writeContact(body)
+    res.status(201).json(body)
   } catch (error) {
-    console.log('addContact', error.message);
+    console.log('addContact', error.message)
   }
 }
 
-const updateContact = async (req, res) => {
+const updateContactFull = async (req, res) => {
   try {
-    const { name, email, phone } = req.body;
-    const allContacts = await getAllContacts()
-    const { id } = req.params;
-    const contact = allContacts.find(contact => contact.id === id)
+    const { id } = req.params
+    const contact = await Contact.findByIdAndUpdate(id, req.body, { new: true })
+    await writeContact(contact)
+    res.status(201).json(contact)
+  } catch (error) {
+    res.status(404)
+      .json({ message: `Contacts not found. Check you id` })
+    console.log('updateContact', error.message)
+  }
+}
+
+const updateContactPartial = async (req, res) => {
+  try {
+    const { name, email, phone, favorite } = req.body
+    const { id } = req.params
+    const contact = await Contact.findByIdAndUpdate(id, req.body, { new: true })
     if (!contact) {
       return res
         .status(404)
-        .json({ message: `Contacts with id '${id}' not found` });
+        .json({ message: `Contacts with id '${id}' not found` })
     } else {
       if (name) { contact.name = name }
       if (email) { contact.email = email }
       if (phone) { contact.phone = phone }
+      if (favorite) { contact.favorite = favorite }
     }
-
-    await writeContact(allContacts)
-    res.status(200).json(contact);
+    await writeContact(contact)
+    res.status(201).json(contact);
   } catch (error) {
-    console.log('updateContact', error.message);
+    console.log('updateContact', error.message)
   }
+}
 
+const updateFavoriteStatus = async (req, res) => {
+  try {
+    const { favorite } = req.body
+    const { id } = req.params
+    const contact = await Contact.findByIdAndUpdate(id, { favorite }, { new: true })
+    console.log(contact)
+    if (!contact) {
+      return res
+        .status(404)
+        .json({ message: `Contacts with id '${id}' not found` })
+    } else {
+      if (favorite) { contact.favorite = favorite }
+    }
+    res.status(201).json(contact);
+  } catch (error) {
+    console.log('updateFavoriteContact', error.message)
+  }
 }
 
 module.exports = {
@@ -92,5 +114,7 @@ module.exports = {
   getContactById,
   removeContact,
   addContact,
-  updateContact,
+  updateContactFull,
+  updateContactPartial,
+  updateFavoriteStatus
 }
