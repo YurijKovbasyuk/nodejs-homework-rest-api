@@ -1,17 +1,19 @@
 const { Contact } = require('../models')
 
-const getAllContacts = async ({ owner: _id }) => { return await Contact.find({ owner: _id }).populate("owner", "name email") }
+// const getAllContacts = async ({ owner: _id }) => { return await Contact.find({ owner: _id }, "", { skip: 5, limit: 5 }).populate("owner", "name email") }
 
 const writeContact = async (contact, _id) => { await Contact.create({ ...contact, owner: _id }) }
 
 const listContacts = async (req, res) => {
   try {
     const { _id } = req.user
-    const allContacts = await getAllContacts({ owner: _id })
+    const { page = 1, limit = 10 } = req.query
+    const skip = (page - 1) * limit
+    const allContacts = await Contact.find({ owner: _id }, "", { skip, limit: Number(limit) }).populate("owner", "name email")
     if (allContacts.length !== 0) {
       return res.status(200).json(allContacts)
     }
-    return null
+    return res.null
   } catch (error) {
     console.error('ERROR listContacts:', error.message)
   }
