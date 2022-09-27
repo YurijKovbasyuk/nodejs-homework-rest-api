@@ -7,17 +7,17 @@ const { listContacts, getContactById, addContact, removeContact, updateContactFu
 
 router.get('/', authUser, listContacts)
 
-router.get('/:id', getContactById)
+router.get('/:id', authUser, getContactById)
 
 router.post('/', authUser, addContactValidation, addContact)
 
-router.delete('/:id', removeContact)
+router.delete('/:id', authUser, removeContact)
 
-router.put('/:id', addContactValidation, updateContactFull)
+router.put('/:id', authUser, addContactValidation, updateContactFull)
 
-router.patch('/:id', patchContactValidation, updateContactPartial)
+router.patch('/:id', authUser, patchContactValidation, updateContactPartial)
 
-router.patch('/:id/favorite', patchFavoriteValidation, updateFavoriteStatus)
+router.patch('/:id/favorite', authUser, patchFavoriteValidation, updateFavoriteStatus)
 
 
 module.exports = { contactsRouter: router }

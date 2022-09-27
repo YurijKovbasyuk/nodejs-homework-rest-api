@@ -1,7 +1,5 @@
 const { Contact } = require('../models')
 
-const writeContact = async (contact, _id) => { await Contact.create({ ...contact, owner: _id }) }
-
 const listContacts = async (req, res) => {
   try {
     const { _id } = req.user
@@ -33,7 +31,7 @@ const addContact = async (req, res) => {
   try {
     const { _id } = req.user
     const body = req.body
-    await writeContact(body, _id)
+    await Contact.create({ ...body, owner: _id })
     res.status(201).json(body)
   } catch (error) {
     console.log('addContact', error.message)
@@ -62,7 +60,6 @@ const updateContactFull = async (req, res) => {
   try {
     const { id } = req.params
     const contact = await Contact.findByIdAndUpdate(id, req.body, { new: true })
-    await writeContact(contact)
     return res.status(201).json(contact)
   } catch (error) {
     res.status(404)
@@ -86,7 +83,7 @@ const updateContactPartial = async (req, res) => {
       if (phone) { contact.phone = phone }
       if (favorite) { contact.favorite = favorite }
     }
-    await writeContact(contact)
+    await Contact.create(contact)
     res.status(201).json(contact);
   } catch (error) {
     console.log('updateContact', error.message)
