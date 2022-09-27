@@ -1,15 +1,15 @@
 const express = require('express')
 const router = express.Router()
 
-const { addContactValidation, patchContactValidation, patchFavoriteValidation } = require('../../middlewares/')
+const { addContactValidation, patchContactValidation, patchFavoriteValidation, authUser } = require('../../middlewares/')
 const { listContacts, getContactById, addContact, removeContact, updateContactFull,
     updateContactPartial, updateFavoriteStatus } = require('../../controllers/contactsControllers')
 
-router.get('/', listContacts)
+router.get('/', authUser, listContacts)
 
 router.get('/:id', getContactById)
 
-router.post('/', addContactValidation, addContact)
+router.post('/', authUser, addContactValidation, addContact)
 
 router.delete('/:id', removeContact)
 

@@ -1,12 +1,13 @@
 const { Contact } = require('../models')
 
-const getAllContacts = async () => { return await Contact.find({}) }
+const getAllContacts = async ({ owner: _id }) => { return await Contact.find({ owner: _id }).populate("owner", "name email") }
 
-const writeContact = async (contact) => { await Contact.create(contact) }
+const writeContact = async (contact, _id) => { await Contact.create({ ...contact, owner: _id }) }
 
 const listContacts = async (req, res) => {
   try {
-    const allContacts = await getAllContacts()
+    const { _id } = req.user
+    const allContacts = await getAllContacts({ owner: _id })
     if (allContacts.length !== 0) {
       return res.status(200).json(allContacts)
     }
@@ -28,6 +29,17 @@ const getContactById = async (req, res) => {
   }
 }
 
+const addContact = async (req, res) => {
+  try {
+    const { _id } = req.user
+    const body = req.body
+    await writeContact(body, _id)
+    res.status(201).json(body)
+  } catch (error) {
+    console.log('addContact', error.message)
+  }
+}
+
 const removeContact = async (req, res) => {
   try {
     const allContacts = await getAllContacts()
@@ -42,16 +54,6 @@ const removeContact = async (req, res) => {
     return res
       .status(404)
       .json({ message: `Contact not found. Check you id` })
-  }
-}
-
-const addContact = async (req, res) => {
-  try {
-    const body = req.body
-    await writeContact(body)
-    res.status(201).json(body)
-  } catch (error) {
-    console.log('addContact', error.message)
   }
 }
 

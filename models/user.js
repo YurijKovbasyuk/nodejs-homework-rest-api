@@ -1,9 +1,9 @@
 const { Schema, model } = require("mongoose")
 
 const userShema = Schema({
-    password: {
+    name: {
         type: String,
-        required: [true, 'Set password for user'],
+        required: [true, 'Name is required'],
     },
     email: {
         type: String,
@@ -14,6 +14,13 @@ const userShema = Schema({
         type: String,
         enum: ["starter", "pro", "business"],
         default: "starter"
+    }, password: {
+        type: String,
+        required: [true, 'Set password for user'],
+    },
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: 'users',
     },
     token: String
 }, { versionKey: false })
