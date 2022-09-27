@@ -1,9 +1,7 @@
-const { addContactValidation } = require('./addContactValidation')
-const { patchContactValidation } = require('./patchContactValidation')
-const { patchFavoriteValidation } = require('./patchFavoriteValidation')
-const { registerValidation } = require('./registerValidation')
-const { loginValidation } = require('./loginValidation')
-const authUser = require('./authUserValidation')
+const { addContactValidation, patchContactValidation, patchFavoriteValidation } = require('./contactValidation')
+
+const { registerValidation, loginValidation, authUser } = require('./authValidation')
+
 
 
 module.exports = { addContactValidation, patchContactValidation, patchFavoriteValidation, registerValidation, loginValidation, authUser }

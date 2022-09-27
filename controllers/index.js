@@ -1,5 +1,4 @@
-const { registerUser } = require('./auth')
-const { loginUser } = require('./auth')
+const { registerUser, loginUser, logout } = require('./auth')
 const getCurrent = require('./users')
 
-module.exports = { registerUser, loginUser, getCurrent }
+module.exports = { registerUser, loginUser, getCurrent, logout }

@@ -1,4 +1,4 @@
-const { User } = require('../models')
+const { User } = require('../../models')
 const jwt = require('jsonwebtoken')
 
 const { SECRET_KEY } = process.env
@@ -14,9 +14,9 @@ const authUser = async (req, res, next) => {
             return res.status(401).json({ message: 'Not authorized' })
         }
         const { id } = jwt.verify(token, SECRET_KEY)
-        console.log(id)
         const user = await User.findById(id)
-        console.log(token)
+        console.log('1', user)
+        console.log('1', token)
         if (!user || !token) {
             return res.status(401).json({ message: 'Not authorized' })
         }
@@ -28,4 +28,4 @@ const authUser = async (req, res, next) => {
     }
 }
 
-module.exports = authUser
+module.exports = { authUser }

@@ -22,7 +22,10 @@ const userShema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'users',
     },
-    token: String
+    token: {
+        type: String,
+        default: null,
+    }
 }, { versionKey: false })
 
 const User = model("user", userShema)

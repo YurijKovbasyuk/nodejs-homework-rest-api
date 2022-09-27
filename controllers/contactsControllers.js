@@ -1,7 +1,5 @@
 const { Contact } = require('../models')
 
-// const getAllContacts = async ({ owner: _id }) => { return await Contact.find({ owner: _id }, "", { skip: 5, limit: 5 }).populate("owner", "name email") }
-
 const writeContact = async (contact, _id) => { await Contact.create({ ...contact, owner: _id }) }
 
 const listContacts = async (req, res) => {
@@ -44,7 +42,8 @@ const addContact = async (req, res) => {
 
 const removeContact = async (req, res) => {
   try {
-    const allContacts = await getAllContacts()
+    const { _id } = req.user
+    const allContacts = await Contact.find({ owner: _id })
     const { id } = req.params
     const result = await Contact.findByIdAndRemove(id)
     if (result.length === allContacts.length) {
@@ -64,7 +63,7 @@ const updateContactFull = async (req, res) => {
     const { id } = req.params
     const contact = await Contact.findByIdAndUpdate(id, req.body, { new: true })
     await writeContact(contact)
-    res.status(201).json(contact)
+    return res.status(201).json(contact)
   } catch (error) {
     res.status(404)
       .json({ message: `Contacts not found. Check you id` })
