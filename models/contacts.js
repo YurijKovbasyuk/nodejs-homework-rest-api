@@ -15,6 +15,9 @@ const contactsShema = Schema({
         type: Boolean,
         default: false,
     },
+    owner: {
+        type: String,
+    },
 }, {
     versionKey: false
     // , timestamps: true
