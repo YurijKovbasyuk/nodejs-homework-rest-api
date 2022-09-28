@@ -10,12 +10,9 @@ const authUser = async (req, res, next) => {
     // npm pasport
 
     try {
-        if (bearer !== "Bearer") {
-            return res.status(401).json({ message: 'Not authorized' })
-        }
         const { id } = jwt.verify(token, SECRET_KEY)
         const user = await User.findById(id)
-        if (!user || !token) {
+        if (bearer !== "Bearer" || !user || !token) {
             return res.status(401).json({ message: 'Not authorized' })
         }
         req.user = user;
