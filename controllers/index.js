@@ -1,5 +1,5 @@
 const { registerUser, loginUser, logout } = require('./auth')
-const { getCurrent, avatar } = require('./users')
+const { getCurrent, updateAvatar, avatar } = require('./users')
 const { listContacts,
     getContactById,
     removeContact,
@@ -16,5 +16,6 @@ module.exports = {
     updateContactFull,
     updateContactPartial,
     updateFavoriteStatus,
+    updateAvatar,
     avatar
 } 
