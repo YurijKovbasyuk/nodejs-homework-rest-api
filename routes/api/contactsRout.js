@@ -4,7 +4,7 @@ const router = express.Router()
 const { addContactValidation, patchContactValidation, patchFavoriteValidation, authUser } = require('../../middlewares/')
 const { listContacts, getContactById, addContact, removeContact, updateContactFull,
     updateContactPartial, updateFavoriteStatus } = require('../../controllers')
-console.log(listContacts)
+
 router.get('/', authUser, listContacts)
 
 router.get('/:id', authUser, getContactById)
