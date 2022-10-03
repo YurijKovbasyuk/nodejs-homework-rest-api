@@ -2,6 +2,8 @@ const { addContactValidation, patchContactValidation, patchFavoriteValidation } 
 
 const { registerValidation, loginValidation, authUser } = require('./authValidation')
 
+const { upload } = require('./multer')
 
 
-module.exports = { addContactValidation, patchContactValidation, patchFavoriteValidation, registerValidation, loginValidation, authUser }
+
+module.exports = { addContactValidation, patchContactValidation, patchFavoriteValidation, registerValidation, loginValidation, authUser, upload }
