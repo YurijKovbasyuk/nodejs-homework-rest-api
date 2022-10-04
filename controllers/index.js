@@ -1,4 +1,4 @@
-const { registerUser, loginUser, logout } = require('./auth')
+const { registerUser, loginUser, logout, verifyEmail, resendVerifyEmail } = require('./auth')
 const { getCurrent, updateAvatar } = require('./users')
 const { listContacts,
     getContactById,
@@ -16,5 +16,7 @@ module.exports = {
     updateContactFull,
     updateContactPartial,
     updateFavoriteStatus,
-    updateAvatar
+    updateAvatar,
+    verifyEmail,
+    resendVerifyEmail
 } 

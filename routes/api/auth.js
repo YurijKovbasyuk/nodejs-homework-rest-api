@@ -1,12 +1,18 @@
 const express = require('express')
 const router = express.Router()
 
-const { registerValidation, loginValidation, authUser } = require('../../middlewares')
+const { registerValidation, loginValidation, authUser, verificationEmail } = require('../../middlewares')
 
-const { registerUser, loginUser, logout } = require('../../controllers')
+const { registerUser, loginUser, logout, verifyEmail, resendVerifyEmail } = require('../../controllers')
+
 
 // router.post('/singin')
 router.post('/register', registerValidation, registerUser)
+
+router.get('/verify/:verificationToken', verifyEmail)
+
+router.post('/verify/', verificationEmail, resendVerifyEmail)
+
 // router.post('/singup')
 router.post('/login', loginValidation, loginUser)
 
