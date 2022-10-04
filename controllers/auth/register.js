@@ -3,7 +3,7 @@ const { sendEmail } = require('../../helpers')
 
 const bcrypt = require('bcrypt')
 const gravatar = require('gravatar')
-const nanoid = require('nanoid')
+const { v4: uuidv4 } = require('uuid')
 
 
 const registerUser = async (req, res) => {
@@ -13,7 +13,7 @@ const registerUser = async (req, res) => {
         if (user) { return res.status(409).json({ message: 'Email or password is wrong' }) }
         const hashPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10))
         const avatarURL = gravatar.url(email)
-        const verificationToken = nanoid()
+        const verificationToken = uuidv4()
         const result = await User.create({ name, email, password: hashPassword, avatarURL, verificationToken })
         const mail = {
             to: email,
@@ -22,6 +22,7 @@ const registerUser = async (req, res) => {
         }
         await sendEmail(mail)
         res.status(201).json({
+            message: 'verification mail send',
             user: {
                 name: result.name,
                 email: result.email,
